@@ -1,0 +1,113 @@
+{
+  "version": "0.9.0-preview.2",
+  "edition": "local-source",
+  "includesNodeRuntime": false,
+  "includesNativePiRuntime": false,
+  "files": [
+    {
+      "path": "browser-assets/projects/agent-console.mjs",
+      "sha256": "2712e67f272a7ba48c78b1637e7322f07d7cbaf5a9a03a317ddf0ad5271777e3",
+      "bytes": 2799
+    },
+    {
+      "path": "browser-assets/projects/app.mjs",
+      "sha256": "c0d997d9120b11c5793d1edcc6771571a3f91ad80c092cfa2386976f1b36b8b9",
+      "bytes": 45162
+    },
+    {
+      "path": "browser-assets/projects/channels-ui.mjs",
+      "sha256": "a3232c6aad9d57cf9940873cdf3641287774b3ebf8e65cf3d2b8235e281ca619",
+      "bytes": 8956
+    },
+    {
+      "path": "browser-assets/projects/client.mjs",
+      "sha256": "003d91eab05983e28d7730f164ff3e799e61a2079d1e1182a48c8f68de31a233",
+      "bytes": 3603
+    },
+    {
+      "path": "browser-assets/projects/index.html",
+      "sha256": "2dee923f877bfb0df87626fae30a26aba8b4734a9a1f370bd70971a46b6aada7",
+      "bytes": 2741
+    },
+    {
+      "path": "browser-assets/projects/model.mjs",
+      "sha256": "be5f8c3da6e11394ce908d70676e6b5412d2d8bb1b84521231bea9fac4fb5876",
+      "bytes": 18882
+    },
+    {
+      "path": "browser-assets/projects/style.css",
+      "sha256": "bd7fdb623902caec8f08d123cfd8257a68eb02d7f25156b352adc84fe3fe5611",
+      "bytes": 54954
+    },
+    {
+      "path": "browser-assets/projects/workspace.mjs",
+      "sha256": "ff06b066370be20d926aef54ce964d909884bcc30a20787a16b1ad24e809da93",
+      "bytes": 6777
+    },
+    {
+      "path": "scripts/local-release.mjs",
+      "sha256": "ac74136da7391c27482c9b13bfb7d8bcdab2c81db33bd15a1bae9bd83041abae",
+      "bytes": 3928
+    },
+    {
+      "path": "scripts/project-api.mjs",
+      "sha256": "f17b079418210f060e8a74fe1fa9e96592f08307a766699df1a1d82b3c05138d",
+      "bytes": 4612
+    },
+    {
+      "path": "scripts/project-preview.mjs",
+      "sha256": "db4dd40bdb3ac9d0a392f07ecbe45b9b75bacc1380c734b8fba2eff0cbf04f18",
+      "bytes": 3257
+    },
+    {
+      "path": "scripts/project-registry.mjs",
+      "sha256": "23a3a08fb153a339ef0c7a641209e2decd512d566c9fd065a6be182bc239f604",
+      "bytes": 3082
+    },
+    {
+      "path": "scripts/project-store.mjs",
+      "sha256": "19fed2da852a44ab59d1212700d896f26ba7cb54cf459168775eb20959b72430",
+      "bytes": 7699
+    },
+    {
+      "path": "scripts/project-channels.mjs",
+      "sha256": "8f3c5a3f36108bf87687b6079990648fc33d2ffbe28316dbe6ce2faf7c5efb48",
+      "bytes": 13523
+    },
+    {
+      "path": "scripts/project-workspace.mjs",
+      "sha256": "d8da0162aaac4fd3f2feda99d900485bef1ebfc8cd8ebe4970ac1e3ab01ef1f9",
+      "bytes": 1482
+    },
+    {
+      "path": "package.json",
+      "sha256": "ade3158dbc6ccc9499ddd402eb0c2c6455f4d95ec3eb2821b01f52b34d00c4f4",
+      "bytes": 316
+    },
+    {
+      "path": "README.md",
+      "sha256": "3d00bdd57bacd98dbedf2a4d81b5b25f0229dcd59beea0490dbe26b9cb4e4bc8",
+      "bytes": 4480
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "83629cb9c403385acc0364679dd264213ab28f084f1ba0b18ebb285edd4369ae",
+      "bytes": 107
+    },
+    {
+      "path": "start.command",
+      "sha256": "a87b4882980ff3f36ef57835125594abfcb290f95ecea536128cef39a54bc67c",
+      "bytes": 392
+    },
+    {
+      "path": "start.sh",
+      "sha256": "a87b4882980ff3f36ef57835125594abfcb290f95ecea536128cef39a54bc67c",
+      "bytes": 392
+    },
+    {
+      "path": "start.bat",
+      "sha256": "bc4d435247ae54d5fecbdc854cdbaa9fcf1fee0837eb8fc047b68a72d3da2ae9",
+      "bytes": 224
+    }
+  ]
+}

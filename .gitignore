@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+state/
+logs/
+workspace/
+data/
+.pi-agent-workspace/
+*.log
+.DS_Store
