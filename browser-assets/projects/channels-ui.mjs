@@ -1,0 +1,40 @@
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function channelDialog({document,host,owner,name,data,bound,manage,bind,update}){
+ const $=id=>document.getElementById(id),dialog=$('detail-dialog');let working=false;
+ const open=(editing=null)=>{
+  let models=editing?.models||[],discoveryId=null;
+  $('dialog-title').textContent=name+' · API 配置';
+  $('dialog-body').innerHTML=`<form id="channel-bind"><p class="dialog-copy">区域内所有进程共用此配置，包括新增节点。</p><div class="bind-row"><select name="channel" aria-label="当前区域渠道"><option value="">未配置</option>${data.channels.map(c=>`<option value="${esc(c.id)}" ${c.id===bound?'selected':''}>${esc(c.name)} · ${esc(c.model)}</option>`).join('')}</select><button class="secondary">应用到此区域</button></div></form><form id="channel-form"><h3>${editing?'编辑连接':'连接模型'}</h3><label class="field">API Key<input name="apiKey" type="password" autocomplete="new-password" maxlength="4096" ${editing?'':'required'} placeholder="${editing?'留空保留原密钥':'粘贴 API Key'}"></label><button class="secondary" type="button" id="detect-channel">识别来源与模型</button><p id="discovery-status" role="status" class="dialog-note"></p><div id="discovery-consent" hidden><p class="dialog-copy" id="discovery-target"></p><button class="primary" type="button" id="discover-models">确认读取模型</button></div><div id="model-selection" ${models.length?'':'hidden'}><label class="field">模型<select name="discoveredModel" aria-label="接口返回模型"></select></label></div><label class="field">推理强度<select name="reasoningEffort"><option value="auto">自动 · 沿用模型默认</option></select></label><p class="dialog-note" id="model-capabilities">接口未声明能力时，不猜测推理等级或上下文上限。</p><details id="channel-advanced"><summary>高级设置 / 无法自动识别</summary><label class="field">接口地址<input name="baseUrl" type="url" placeholder="https://api.example.com/v1" value="${esc(editing?.baseUrl||'')}"></label><label class="field">协议<select name="protocol"><option value="chat-completions">Chat Completions 兼容</option><option value="responses" ${editing?.protocol==='responses'?'selected':''}>Responses 兼容</option></select></label><label class="field">手动模型 ID<input name="model" maxlength="200" value="${esc(editing?.model||'')}"></label><label class="field">连接名称<input name="name" maxlength="50" value="${esc(editing?.name||'')}"></label></details><p class="dialog-note">仅匹配本机记录，不向多个平台试发 Key。密钥本机保存、未加密、不回显；读取模型不代表推理调用可用。</p><button class="primary" type="submit">保存并应用到此区域</button></form><details class="saved-connections"><summary>已保存连接（${data.channels.length}）</summary><div class="channel-list">${data.channels.map(c=>`<div class="channel-row"><div><strong>${esc(c.name)}</strong><small>${esc(c.model)} · ${c.verified?'已验证':'调用待验证'}</small></div><div class="channel-actions"><button class="text-link" data-channel-edit="${c.id}">编辑</button><button class="text-link" data-channel-test="${c.id}">测试</button><button class="text-link" data-channel-remove="${c.id}">删除</button></div></div>`).join('')}</div></details><p class="form-error" role="alert"></p>`;
+  const form=$('channel-form'),field=n=>form.querySelector(`[name=${n}]`),error=t=>dialog.querySelector('.form-error').textContent=t;
+  const capabilities=()=>{const m=models.find(m=>m.id===field('model').value);field('reasoningEffort').innerHTML='<option value="auto">自动 · 沿用模型默认</option>'+(m?.reasoningEfforts||[]).map(v=>`<option value="${v}">${v}</option>`).join('');if(m?.reasoningEfforts?.includes(editing?.reasoningEffort))field('reasoningEffort').value=editing.reasoningEffort;$('model-capabilities').textContent=`上下文：${m?.contextWindow?m.contextWindow.toLocaleString()+' tokens':'接口未声明'} · 图片：${m?.imageInput===true?'接口声明支持':m?.imageInput===false?'接口声明不支持':'待验证'} · 推理：${m?.reasoningEfforts?.length?'可选择接口声明等级':'模型默认'}`;};
+  const showModels=()=>{field('discoveredModel').innerHTML=models.map(m=>`<option value="${esc(m.id)}">${esc(m.id)}</option>`).join('');const current=field('model').value;if(models.length){field('discoveredModel').value=models.some(m=>m.id===current)?current:models[0].id;field('model').value=field('discoveredModel').value;$('model-selection').hidden=false;}capabilities();};showModels();
+  field('discoveredModel').onchange=()=>{field('model').value=field('discoveredModel').value;capabilities();};field('model').oninput=capabilities;
+  // Changing destination/key invalidates an earlier capability discovery.
+  for(const n of ['apiKey','baseUrl'])field(n).oninput=()=>{discoveryId=null;models=[];$('model-selection').hidden=true;$('discovery-consent').hidden=true;capabilities();};
+  const withBusy=async fn=>{if(working)return;working=true;const controls=[...dialog.querySelectorAll('button,input,select')];controls.forEach(x=>x.disabled=true);error('');try{await fn();}catch(e){error(e.message);}finally{working=false;controls.forEach(x=>x.disabled=false);}};
+  $('detect-channel').onclick=()=>withBusy(async()=>{
+   const apiKey=field('apiKey').value;if(!apiKey)throw Error('重新识别需要填写 Key；仅编辑原连接可留空');
+   if(!field('baseUrl').value){const result=await manage('detect',{apiKey});$('discovery-status').textContent=result.message;if(result.status!=='matched'){$('channel-advanced').open=true;return;}field('baseUrl').value=result.baseUrl;field('protocol').value=result.protocol;field('model').value=result.model||'';}
+   $('discovery-target').textContent=`仅向 ${field('baseUrl').value} 发送此 Key，读取可用模型列表。不会保存，直到你点击“保存并应用”。`;$('discovery-consent').hidden=false;
+  });
+  $('discover-models').onclick=()=>withBusy(async()=>{const result=await manage('discover',{apiKey:field('apiKey').value,baseUrl:field('baseUrl').value,consent:true});models=result.models;discoveryId=result.discoveryId;showModels();$('discovery-consent').hidden=true;$('discovery-status').textContent=`已读取 ${models.length} 个模型。当前选择可调整；实际调用仍待验证。`;});
+  if(!dialog.open)dialog.showModal();
+  $('channel-bind').onsubmit=e=>{e.preventDefault();if(!working)bind(owner,$('channel-bind').querySelector('select').value);};
+  form.onsubmit=e=>{e.preventDefault();if(!field('baseUrl').value||!field('model').value){$('channel-advanced').open=true;error('请先识别模型，或补充接口地址与模型 ID');return;}const values=Object.fromEntries(['name','baseUrl','protocol','model','apiKey','reasoningEffort'].map(k=>[k,field(k).value]));if(!values.name)try{values.name=new URL(values.baseUrl).hostname;}catch{}run('save',{...values,discoveryId,id:editing?.id||'channel-'+host.crypto.randomUUID()});};
+  document.querySelectorAll('[data-channel-edit]').forEach(b=>b.onclick=()=>open(data.channels.find(c=>c.id===b.dataset.channelEdit)));
+  document.querySelectorAll('[data-channel-test]').forEach(b=>b.onclick=()=>{const c=data.channels.find(c=>c.id===b.dataset.channelTest);confirm(`测试 ${c.name}`,`将向 ${c.baseUrl} 发送密钥和最小测试消息，模型 ${c.model} 可能计费。`,()=>run('verify',{id:c.id,consent:true}));});
+  document.querySelectorAll('[data-channel-remove]').forEach(b=>b.onclick=()=>confirm('删除渠道','删除本机密钥；使用此渠道的区域将停止 API 对话，历史消息保留。',()=>run('remove',{id:b.dataset.channelRemove})));
+ };
+ function confirm(title,text,action){$('dialog-title').textContent=title;$('dialog-body').innerHTML=`<p class="dialog-copy">${esc(text)}</p><div class="confirm-actions"><button class="secondary" id="channel-cancel">取消</button><button class="primary" id="channel-confirm">确认</button></div><p class="form-error" role="alert"></p>`;$('channel-cancel').onclick=()=>open();$('channel-confirm').onclick=action;}
+ async function run(action,payload){
+  if(working)return;working=true;let saved=false;
+  const controls=[...dialog.querySelectorAll('button,input,select')].map(el=>[el,el.disabled]);
+  for(const [el] of controls)el.disabled=true;
+  try{data=await manage(action,{...payload,revision:data.revision});update(data);if(action==='save'){saved=true;const key=dialog.querySelector('[name=apiKey]');if(key)key.value='';}else open();}
+  catch(e){dialog.querySelector('.form-error').textContent=e.message;}
+  finally{working=false;for(const [el,disabled] of controls)el.disabled=disabled;}
+  // Release the dialog lock before project binding takes its own control snapshot.
+  if(saved)bind(owner,payload.id);
+ }
+ open();
+}
