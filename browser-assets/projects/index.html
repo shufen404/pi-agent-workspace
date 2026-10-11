@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>Pi · Agent 工作空间</title><link rel="stylesheet" href="/workbench/projects/style.css"></head>
+<body>
+<div class="app-shell">
+ <aside class="sidebar" id="workspace-sidebar" aria-label="工作空间导航">
+  <a href="/workbench/projects" class="brand"><span class="brand-symbol">π</span><span>Pi<small>PERSONAL WORKSPACE</small></span></a>
+  <div class="space-caption">我的空间 <span>LOCAL</span></div>
+  <a class="nav-item selected" id="home-nav" href="/workbench/projects"><span>▦</span>项目工作空间</a>
+  <a class="nav-item" id="learning-nav" href="/workbench/projects?space=learning"><span>◷</span>学习空间</a>
+  <a class="nav-item" id="life-nav" href="/workbench/projects?space=life"><span>♡</span>生活空间</a>
+  <div id="agent-nav" hidden></div>
+  <div id="current-project-nav"></div>
+  <div class="future-spaces" hidden></div>
+  <div class="sidebar-bottom"><div class="profile"><span>我</span><div>我的工作空间<small>本地工作区</small></div></div></div>
+ </aside>
+ <div class="workspace">
+  <header class="topbar"><button id="toggle-projects" class="icon-button mobile-menu" aria-label="展开项目导航" aria-controls="workspace-sidebar" aria-expanded="false">☰</button><div id="breadcrumb">工作项目 <span>/</span> 用户反馈洞察看板</div><nav class="mode-switch" aria-label="工作模式"><a id="chat-mode-link" href="/workbench">聊天</a><span aria-current="page">管理空间</span></nav><div class="top-actions"><button class="quiet" data-materials="logs">操作记录 ↗</button></div></header>
+  <div class="demo-notice"><span><b>演示模式</b> Agent 尚未连接；节点与已发送对话保存在本机，模型回复仍为示例。</span><label>场景 <select id="scenario" aria-label="演示场景"><option value="working">协作进行中</option><option value="rework">复验失败 · 返工</option><option value="evidence">终审证据不足</option></select></label></div>
+  <main id="main"></main>
+  <footer><span>PI / AGENT WORKSPACE</span><span>WORKSPACE 0.8</span></footer>
+ </div>
+</div>
+<dialog id="detail-dialog" aria-labelledby="dialog-title"><div class="dialog-heading"><h2 id="dialog-title"></h2><button id="close-dialog" class="icon-button" aria-label="关闭弹窗">×</button></div><div id="dialog-body"></div></dialog>
+<button id="sidebar-backdrop" class="sidebar-backdrop" aria-label="关闭项目导航" hidden></button>
+<div id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="/workbench/projects/client.mjs"></script>
+</body></html>
